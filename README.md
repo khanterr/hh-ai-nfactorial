@@ -1,12 +1,22 @@
-# Job Search Platform Backend
+# Job Search Platform (LinkedIn / HH mini)
 
-A comprehensive backend API for a job search platform built with FastAPI and SQLite.
+A comprehensive job search platform with AI-powered features, built as a team project.
+
+## Team Structure
+
+This project is organized by roles:
+
+- 🎨 **Frontend Developer** - User interface and client-side development
+- ⚙️ **Backend Developer** - API and server-side logic
+- 🧠 **AI Engineer** - Machine learning models and intelligent features
+- 🧪 **QA Engineer & Workflow Master** - Testing, quality assurance, and CI/CD
 
 ## Features
 
 - Job listings with detailed information
 - Company profiles with descriptions
 - Advanced filtering by city, grade, and format
+- AI-powered job recommendations
 - RESTful API endpoints
 - Proper data validation with Pydantic
 - SQLite database with SQLAlchemy ORM
@@ -63,14 +73,27 @@ Jobs can be filtered by:
 ## Project Structure
 
 ```
+├── frontend/               # 🎨 Frontend Developer workspace
+│   └── README.md          # Frontend setup and guidelines
+├── backend/                # ⚙️ Backend Developer workspace
+│   └── README.md          # Backend setup and guidelines
+├── ai-engineer/            # 🧠 AI Engineer workspace
+│   └── README.md          # AI/ML setup and guidelines
+├── qa-workflow/            # 🧪 QA Engineer & Workflow Master workspace
+│   └── README.md          # QA and workflow documentation
 ├── main.py                 # Main application entry point
 ├── database.py             # Database setup and session management
 ├── models.py               # SQLAlchemy models
 ├── schemas.py              # Pydantic schemas for request/response validation
 ├── crud.py                 # Database operations
-├── routers/                # API route definitions
-│   ├── jobs.py
-│   └── companies.py
 ├── init_db.py              # Script to initialize database with sample data
 └── requirements.txt        # Project dependencies
 ```
+
+## Getting Started
+
+Each team member should work in their designated directory:
+- Frontend developers: See [frontend/README.md](frontend/README.md)
+- Backend developers: See [backend/README.md](backend/README.md)
+- AI engineers: See [ai-engineer/README.md](ai-engineer/README.md)
+- QA engineers: See [qa-workflow/README.md](qa-workflow/README.md)
