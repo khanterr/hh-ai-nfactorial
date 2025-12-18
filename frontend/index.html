@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Search Platform - Find Your Dream Job</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="#" class="logo">JobPlatform</a>
+                <div class="search-box">
+                    <input type="text" placeholder="Search jobs, companies..." id="searchInput">
+                    <button class="search-btn">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="nav-right">
+                <a href="#" class="nav-link">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10 2a5 5 0 00-5 5v2a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2V7a5 5 0 00-5-5zm3 7V7a3 3 0 10-6 0v2h6z"/>
+                    </svg>
+                    <span>Jobs</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
+                    </svg>
+                    <span>Companies</span>
+                </a>
+                <a href="#" class="nav-link">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                    </svg>
+                    <span>Profile</span>
+                </a>
+                <button class="btn-primary">Sign In</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Filters Sidebar -->
+            <aside class="filters-sidebar">
+                <div class="filter-section">
+                    <h3>Filters</h3>
+
+                    <div class="filter-group">
+                        <h4>City</h4>
+                        <select id="cityFilter" class="filter-select">
+                            <option value="">All Cities</option>
+                            <option value="Almaty">Almaty</option>
+                            <option value="Astana">Astana</option>
+                            <option value="Shymkent">Shymkent</option>
+                            <option value="Remote">Remote</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4>Experience Level</h4>
+                        <select id="gradeFilter" class="filter-select">
+                            <option value="">All Levels</option>
+                            <option value="Junior">Junior</option>
+                            <option value="Mid">Mid</option>
+                            <option value="Senior">Senior</option>
+                            <option value="Lead">Lead</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <h4>Work Format</h4>
+                        <select id="formatFilter" class="filter-select">
+                            <option value="">All Formats</option>
+                            <option value="Remote">Remote</option>
+                            <option value="Office">Office</option>
+                            <option value="Hybrid">Hybrid</option>
+                        </select>
+                    </div>
+
+                    <button class="btn-secondary" id="clearFilters">Clear Filters</button>
+                </div>
+            </aside>
+
+            <!-- Job Listings -->
+            <section class="job-listings">
+                <div class="listings-header">
+                    <h2>Recommended Jobs</h2>
+                    <p class="results-count">Showing <span id="jobCount">0</span> jobs</p>
+                </div>
+
+                <div id="jobsContainer" class="jobs-grid">
+                    <!-- Job cards will be inserted here by JavaScript -->
+                    <div class="loading">Loading jobs...</div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>About</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Press</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>For Job Seekers</h4>
+                    <ul>
+                        <li><a href="#">Browse Jobs</a></li>
+                        <li><a href="#">Career Advice</a></li>
+                        <li><a href="#">Salary Tools</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>For Employers</h4>
+                    <ul>
+                        <li><a href="#">Post a Job</a></li>
+                        <li><a href="#">Employer Branding</a></li>
+                        <li><a href="#">Recruitment Solutions</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Job Search Platform. All rights reserved.</p>
+                <div class="language-selector">
+                    <select>
+                        <option>English</option>
+                        <option>Русский</option>
+                        <option>Қазақша</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
