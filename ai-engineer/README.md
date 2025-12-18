@@ -1,21 +1,234 @@
-# 🧠 AI Engineer
+# AI Chat Bot для веб-сайта с вакансиями
 
-This directory contains AI/ML models and intelligent features.
+AI чат-бот на основе OpenAI для помощи пользователям в подборе вакансий, ответах на вопросы и рекомендациях по навыкам.
 
-## Responsibilities
+## Возможности
 
-- Machine learning model development
-- AI-powered features (recommendations, matching, etc.)
-- Data processing and analysis
-- Model training and optimization
+- 🤖 **Подбор вакансий** - помогает найти подходящие вакансии на основе навыков и опыта
+- 💬 **Ответы на вопросы** - отвечает на вопросы о вакансиях, компаниях и требованиях
+- 📚 **Рекомендации по навыкам** - подсказывает, какие навыки стоит подтянуть для конкретных вакансий
 
-## Tech Stack
+## Технологии
 
-- Python (scikit-learn, TensorFlow, PyTorch)
-- NLP libraries
-- Data processing tools
-- ML pipelines
+- **FastAPI** - веб-фреймворк для создания API
+- **OpenAI API** - для работы с AI чат-ботом
+- **Pydantic** - для валидации данных
+- **Python 3.8+**
 
-## Getting Started
+## Установка
 
-Add your AI/ML models and data processing scripts here.
+1. Клонируйте репозиторий или скопируйте файлы проекта
+
+2. Установите зависимости:
+```bash
+pip install -r requirements.txt
+```
+
+3. Создайте файл `.env` на основе `.env.example`:
+```bash
+cp .env.example .env
+```
+
+4. Добавьте ваш OpenAI API ключ в `.env`:
+```
+OPENAI_API_KEY=your_actual_api_key_here
+```
+
+Получить API ключ можно на [platform.openai.com](https://platform.openai.com/api-keys)
+
+## Запуск
+
+Запустите сервер:
+```bash
+python main.py
+```
+
+Или с помощью uvicorn:
+```bash
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+Сервер будет доступен по адресу: `http://localhost:8000`
+
+## API Документация
+
+После запуска сервера доступна интерактивная документация:
+- Swagger UI: `http://localhost:8000/docs`
+- ReDoc: `http://localhost:8000/redoc`
+
+## Основные эндпоинты
+
+### POST `/api/chat`
+Основной эндпоинт для общения с чат-ботом.
+
+**Тело запроса:**
+```json
+{
+  "message": "Помоги найти вакансию Python разработчика",
+  "conversation_history": [
+    {
+      "role": "user",
+      "content": "Привет"
+    },
+    {
+      "role": "assistant",
+      "content": "Привет! Чем могу помочь?"
+    }
+  ],
+  "user_skills": ["Python", "Django", "PostgreSQL"],
+  "user_experience": "middle"
+}
+```
+
+**Ответ:**
+```json
+{
+  "response": "На основе ваших навыков рекомендую следующие вакансии...",
+  "suggested_vacancies": [1, 4],
+  "skill_recommendations": ["Docker", "Kubernetes"]
+}
+```
+
+### POST `/api/recommendations`
+Получить структурированные рекомендации по вакансиям и навыкам.
+
+**Параметры запроса:**
+- `user_skills`: список навыков (через запятую или массив)
+- `user_experience`: уровень опыта (junior, middle, senior, lead)
+
+### GET `/api/vacancies`
+Получить список вакансий с возможностью фильтрации.
+
+**Параметры запроса:**
+- `skills`: навыки для фильтрации (через запятую)
+- `experience_level`: уровень опыта для фильтрации
+
+### GET `/api/vacancies/{vacancy_id}`
+Получить детальную информацию о вакансии.
+
+### GET `/api/companies`
+Получить список всех компаний.
+
+### GET `/api/companies/{company_id}`
+Получить информацию о компании.
+
+## Примеры использования
+
+### Пример запроса к чат-боту (Python)
+
+```python
+import requests
+
+url = "http://localhost:8000/api/chat"
+data = {
+    "message": "Какие вакансии есть для Python разработчика?",
+    "user_skills": ["Python", "Django"],
+    "user_experience": "middle"
+}
+
+response = requests.post(url, json=data)
+print(response.json())
+```
+
+### Пример запроса к чат-боту (JavaScript/Fetch)
+
+```javascript
+const response = await fetch('http://localhost:8000/api/chat', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    message: 'Помоги найти вакансию',
+    user_skills: ['Python', 'React'],
+    user_experience: 'middle'
+  })
+});
+
+const data = await response.json();
+console.log(data);
+```
+
+### Пример запроса к чат-боту (cURL)
+
+```bash
+curl -X POST "http://localhost:8000/api/chat" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "Какие навыки нужны для Data Scientist?",
+    "user_skills": ["Python"],
+    "user_experience": "junior"
+  }'
+```
+
+## Интеграция с фронтендом
+
+API поддерживает CORS и готов к интеграции с любым фронтендом. Пример интеграции:
+
+```javascript
+// React компонент
+const ChatBot = () => {
+  const [message, setMessage] = useState('');
+  const [history, setHistory] = useState([]);
+  
+  const sendMessage = async () => {
+    const response = await fetch('http://localhost:8000/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message,
+        conversation_history: history,
+        user_skills: ['Python', 'React'],
+        user_experience: 'middle'
+      })
+    });
+    
+    const data = await response.json();
+    setHistory([...history, 
+      { role: 'user', content: message },
+      { role: 'assistant', content: data.response }
+    ]);
+    setMessage('');
+  };
+  
+  return (
+    <div>
+      {/* UI компонента */}
+    </div>
+  );
+};
+```
+
+## Структура проекта
+
+```
+.
+├── main.py              # FastAPI приложение и эндпоинты
+├── chat_service.py      # Сервис для работы с OpenAI
+├── models.py            # Модели данных (Pydantic)
+├── database.py          # Работа с данными (мок-данные)
+├── requirements.txt     # Зависимости Python
+├── .env.example         # Пример файла с переменными окружения
+└── README.md           # Документация
+```
+
+## Настройка
+
+### Использование другой модели OpenAI
+
+В файле `chat_service.py` можно изменить модель:
+
+```python
+self.model = "gpt-3.5-turbo"  # Более дешевая модель
+# или
+self.model = "gpt-4-turbo-preview"  # Более продвинутая модель
+```
+
+### Подключение реальной базы данных
+
+В файле `database.py` замените мок-данные на подключение к реальной БД (PostgreSQL, MongoDB и т.д.).
+
+## Лицензия
+
+MIT
+

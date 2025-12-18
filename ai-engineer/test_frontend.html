@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat Bot - Тест</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 800px;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .chat-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .message {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+        
+        .message.user {
+            background: #667eea;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .message.bot {
+            background: #f0f0f0;
+            color: #333;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .input-area {
+            padding: 20px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .input-area input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .input-area input:focus {
+            border-color: #667eea;
+        }
+        
+        .input-area button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        
+        .input-area button:hover {
+            transform: scale(1.05);
+        }
+        
+        .input-area button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(102, 126, 234, 0.3);
+            border-radius: 50%;
+            border-top-color: #667eea;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .config {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+            font-size: 12px;
+        }
+        
+        .config input {
+            width: 200px;
+            padding: 6px 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 AI Chat Bot для вакансий</h1>
+            <p>Помогаю подобрать вакансии, отвечаю на вопросы и даю рекомендации</p>
+        </div>
+        
+        <div class="chat-area" id="chatArea">
+            <div class="message bot">
+                Привет! Я AI-ассистент для подбора вакансий. Чем могу помочь?
+            </div>
+        </div>
+        
+        <div class="config">
+            <label>
+                API URL:
+                <input type="text" id="apiUrl" value="http://localhost:8000" placeholder="http://localhost:8000">
+            </label>
+            <label style="margin-left: 20px;">
+                Навыки (через запятую):
+                <input type="text" id="userSkills" value="Python, Django" placeholder="Python, React">
+            </label>
+            <label style="margin-left: 20px;">
+                Опыт:
+                <input type="text" id="userExperience" value="middle" placeholder="junior/middle/senior">
+            </label>
+        </div>
+        
+        <div class="input-area">
+            <input 
+                type="text" 
+                id="messageInput" 
+                placeholder="Напишите сообщение..."
+                onkeypress="if(event.key === 'Enter') sendMessage()"
+            >
+            <button id="sendButton" onclick="sendMessage()">Отправить</button>
+        </div>
+    </div>
+    
+    <script>
+        const chatArea = document.getElementById('chatArea');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const apiUrlInput = document.getElementById('apiUrl');
+        const userSkillsInput = document.getElementById('userSkills');
+        const userExperienceInput = document.getElementById('userExperience');
+        
+        let conversationHistory = [];
+        
+        function addMessage(text, isUser) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            messageDiv.textContent = text;
+            chatArea.appendChild(messageDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+        
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+            
+            // Добавляем сообщение пользователя
+            addMessage(message, true);
+            conversationHistory.push({ role: 'user', content: message });
+            messageInput.value = '';
+            
+            // Блокируем кнопку
+            sendButton.disabled = true;
+            sendButton.innerHTML = '<div class="loading"></div>';
+            
+            // Получаем настройки
+            const apiUrl = apiUrlInput.value.trim();
+            const userSkills = userSkillsInput.value.split(',').map(s => s.trim()).filter(s => s);
+            const userExperience = userExperienceInput.value.trim() || null;
+            
+            try {
+                const response = await fetch(`${apiUrl}/api/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        conversation_history: conversationHistory.slice(-10), // Последние 10 сообщений
+                        user_skills: userSkills,
+                        user_experience: userExperience
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Добавляем ответ бота
+                addMessage(data.response, false);
+                conversationHistory.push({ role: 'assistant', content: data.response });
+                
+                // Показываем дополнительные рекомендации, если есть
+                if (data.suggested_vacancies && data.suggested_vacancies.length > 0) {
+                    addMessage(`💡 Рекомендованные вакансии: ${data.suggested_vacancies.join(', ')}`, false);
+                }
+                
+                if (data.skill_recommendations && data.skill_recommendations.length > 0) {
+                    addMessage(`📚 Рекомендуемые навыки: ${data.skill_recommendations.join(', ')}`, false);
+                }
+                
+            } catch (error) {
+                addMessage(`Ошибка: ${error.message}. Убедитесь, что сервер запущен на ${apiUrl}`, false);
+                console.error('Error:', error);
+            } finally {
+                sendButton.disabled = false;
+                sendButton.textContent = 'Отправить';
+            }
+        }
+    </script>
+</body>
+</html>
+
